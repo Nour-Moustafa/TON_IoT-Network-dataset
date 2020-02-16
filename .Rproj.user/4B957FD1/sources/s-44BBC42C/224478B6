@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1580022485721.000,
+    "dirty" : true,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "600827906",
+    "id" : "224478B6",
+    "lastKnownWriteTime" : 1578234722,
+    "last_content_update" : 1581781579758,
+    "path" : "F:/My-papers/UNSW_IoT20-dataset/R_code/Iot_20/Machine_Learning_Classifiers.R",
+    "project_path" : "Machine_Learning_Classifiers.R",
+    "properties" : {
+        "cursorPosition" : "74,51",
+        "scrollLine" : "41"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

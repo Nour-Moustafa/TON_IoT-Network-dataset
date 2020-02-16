@@ -1,0 +1,69 @@
+library(Hmisc)
+library(caret)
+library(mlbench)
+library(ggcorrplot)
+library(e1071)
+library(scales)
+library(caTools)
+
+#### Read network data####################################################
+data <- read.csv("./network_analysis/Train_Test_Network.csv")
+#data <- read.csv("./\Iot_20\linux_anaylsis/..")
+names(data)[1] <- "ts" # change firstcoum name as ts
+no_attributes= ncol(data)-2
+dt = data [,1:no_attributes] # data without classes (used for data preprocessing)
+orignal_dt= data [, 1:ncol(data)-1]  # orignal data witout timestamp and attack categories (with label 0 as normal & 1 as attack) 
+
+##########################################################################
+
+## Data conversion to numeric values######################################
+num_conv <- sapply(dt,is.factor)    # strings   
+str_att <- sapply(dt[,num_conv],unclass)   # string to numeric attributes
+num_att <- sapply(dt[,!num_conv],unclass)  # numeric attaibutes
+out<-cbind(str_att,num_att) 
+
+
+## data normalization ####################################################
+
+dt_n= as.data.frame(apply(out, 2, rescale, to=c(0,1)))
+all_dt = cbind (dt_n,data[,ncol(data)-1]) 
+names(all_dt)[ncol(all_dt)] <- "label"
+## Correlation anaysis and Feature Selection to data #######################
+set.seed(7)
+correlationMatrix <- cor_pmat(dt_n) # calculate correlation matrix
+correlationMatrix[is.na(correlationMatrix)] <- 0
+print(correlationMatrix) # summarize the correlation matrix
+highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.5) # find attributes that are highly corrected that is equal 0.8
+print(highlyCorrelated) # print indexes of highly correlated attributes
+# plot low correlated features
+dt_corr = sapply(dt_n[,-highlyCorrelated],unclass)
+dt_corr_m = cor_pmat(dt_corr)
+ggcorrplot(dt_corr_m, hc.order = TRUE, type = "lower", lab = TRUE)
+# store correlated features with labels for machine learning classifcation
+data_corr= cbind(as.data.frame(dt_corr),data[,ncol(data)-1])
+names(data_corr)[ncol(data_corr)] <- "label"
+#############################################################################
+################### Machine Learning for classifcation ######################
+
+#### Divide data into 70% fro training and 30% for testing
+set.seed(3033)
+intrain <- createDataPartition(y = data_corr$label, p= 0.7, list = FALSE)
+
+orignal_train <- orignal_dt[intrain,]
+orignal_test <- orignal_dt[-intrain,]
+
+filtered_train <- data_corr[intrain,]
+filtered_test <- data_corr[-intrain,]
+
+# Statistcs of categorical and numeric data attributes############################
+str(data)
+summary(data)
+
+
+summary(filtered_train)
+summary(filtered_test)
+
+summary(orignal_train)
+summary(orignal_test)
+###
+

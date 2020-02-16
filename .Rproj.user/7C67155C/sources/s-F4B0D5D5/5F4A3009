@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1578227629636.000,
+    "dirty" : true,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "5F4A3009",
+    "lastKnownWriteTime" : 1578228680,
+    "last_content_update" : 1578229249114,
+    "path" : "N:/My-papers/UNSW_IoT20-dataset/R_code/Iot_20/Data_Analysis.R",
+    "project_path" : "Data_Analysis.R",
+    "properties" : {
+        "cursorPosition" : "30,27",
+        "scrollLine" : "38"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

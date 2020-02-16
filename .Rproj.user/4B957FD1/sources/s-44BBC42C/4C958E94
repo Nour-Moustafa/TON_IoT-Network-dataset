@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1580141313944.000,
+    "dirty" : true,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "4C958E94",
+    "lastKnownWriteTime" : 1580141324,
+    "last_content_update" : 1580142335539,
+    "path" : "F:/My-papers/UNSW_IoT20-dataset/R_code/Iot_20/windows-data-anaysis.R",
+    "project_path" : "windows-data-anaysis.R",
+    "properties" : {
+        "cursorPosition" : "24,44",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

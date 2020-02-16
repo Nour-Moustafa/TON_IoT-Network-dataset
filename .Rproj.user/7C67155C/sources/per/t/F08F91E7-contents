@@ -1,0 +1,99 @@
+
+library(Hmisc)
+library(caret)
+library(mlbench)
+library(ggcorrplot)
+library(e1071)
+# Install
+#install.packages("ggcorrplot")
+#install.packages("scales", dependencies=TRUE)
+library(scales)
+library(randomForest)
+
+#### network data##################
+dt_network <- read.csv("Train_Test_Network.csv")
+labels = dt_network[,44:45]
+dt = dt_network [,1:43]
+
+
+str(dt_network)
+
+# convert data to numeric features
+num_conv <- sapply(dt,is.factor)    # strings   
+str_att <- sapply(dt[,num_conv],unclass)   # string to numeric attributes
+num_att <- sapply(dt[,!num_conv],unclass)  # numeric attaibutes
+out<-cbind(str_att,num_att) 
+
+####
+
+## normalize data in a range of [0,1]
+# https://datasharkie.com/how-to-normalize-data-in-r/ 
+
+dt_n= as.data.frame(apply(out, 2, rescale, to=c(0,1)))
+all_dt = cbind (dt_n,labels) 
+
+## feature selection without label
+## https://machinelearningmastery.com/feature-selection-with-the-caret-r-package/  (correlation anaysis)
+set.seed(7)
+# calculate correlation matrix
+#correlationMatrix <- cor(all_dt[,1:43])
+correlationMatrix <- cor_pmat(all_dt[,1:43])
+correlationMatrix[is.na(correlationMatrix)] <- 0
+# summarize the correlation matrix
+print(correlationMatrix)
+# find attributes that are highly corrected (ideally >0.75)
+highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.8)
+# print indexes of highly correlated attributes
+print(highlyCorrelated)
+
+# plot high correlated features
+dt_corr = sapply(all_dt[,highlyCorrelated],unclass)
+dt_corr_m = cor_pmat(dt_corr)
+ggcorrplot(dt_corr_m, hc.order = TRUE, type = "lower", lab = TRUE)
+
+# correlated features with labels
+data_corr= cbind(as.data.frame(dt_corr),labels$label)
+
+
+## feature selection with the label ## 
+## https://machinelearningmastery.com/feature-selection-with-the-caret-r-package/  (find description of LVQ method)
+set.seed(7)
+all_lb = cbind (as.data.frame(dt_n),labels[,1])
+# prepare training scheme
+control <- trainControl(method="repeatedcv", number=15, repeats=3)
+# train the model
+model <- train(all_lb$`labels[, 1]`~., data=all_lb, method="lvq", preProcess="scale", trControl=control)
+# estimate variable importance
+importance <- varImp(model, scale=FALSE)
+# summarize importance
+print(importance)
+# plot importance
+plot(importance)
+
+
+
+# ensure the results are repeatable
+set.seed(7)
+# load the library
+library(mlbench)
+library(caret)
+# load the data
+
+# define the control using a random forest selection function
+control <- rfeControl(functions=rfFuncs, method="cv", number=10)
+# run the RFE algorithm
+results <- rfe(all_lb[,1:42], all_lb[,43], sizes=c(1:43), rfeControl=control)
+# summarize the results
+print(results)
+# list the chosen features
+predictors(results)
+# plot the results
+plot(results, type=c("g", "o"))
+
+
+
+##Training & testing sets
+set.seed(3456)
+trainIndex <- createDataPartition(dt_network$type, p = .7, list = FALSE, times = 1)
+dt_train <- dt_network[ trainIndex,]
+dt_test  <- dt_network[-trainIndex,]
